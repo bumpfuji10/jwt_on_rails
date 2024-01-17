@@ -3,7 +3,9 @@ class ApplicationController < ActionController::Base
   attr_reader :current_user
 
   protected
+
   def authenticate_request!
+    # ここがfalse
     unless user_id_in_token?
       render json: { errors: ['Not Authenticated'] }, status: :unauthorized
       return
@@ -15,6 +17,7 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Barer tokenを返却するメソッド
   def http_token
       @http_token ||= if request.headers['Authorization'].present?
         request.headers['Authorization'].split(' ').last
@@ -26,6 +29,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_id_in_token?
+    # Bearer Tokenが存在していて、且つauth_tokenが存在していて、且つauth_token[:user_id].to_iが存在している場合true
     http_token && auth_token && auth_token[:user_id].to_i
   end
 end
